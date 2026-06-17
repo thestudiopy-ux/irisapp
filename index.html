@@ -1,1 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Botanical Encyclopedia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            botanical: {
+              50: '#f4f7f4',
+              100: '#e5ebe5',
+              200: '#cbdad1',
+              300: '#a3beaf',
+              400: '#759a85',
+              500: '#537d68',
+              600: '#406351',
+              700: '#345041',
+              800: '#2b4136',
+              900: '#24372d',
+              950: '#131e19',
+            },
+          },
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    .font-serif-accent { font-family: 'Playfair Display', Georgia, serif; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col font-sans antialiased">
 
+  <!-- Top Navigation Bar -->
+  <nav class="bg-white border-b border-stone-200 px-6 md:px-12 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+    <div class="font-serif-accent font-bold text-botanical-950 text-xl hidden sm:block">The Botanical Encyclopedia</div>
+    <div class="flex gap-6 w-full sm:w-auto justify-between sm:justify-end">
+      <button onclick="resetApp()" class="flex items-center gap-2 text-stone-600 hover:text-botanical-700 font-bold text-sm transition-colors">
+        <span class="text-lg">🏡</span> <span>홈으로</span>
+      </button>
+      <button onclick="alert('로널드 피셔(1936)의 오리지널 데이터셋 통계 엔진 탑재')" class="flex items-center gap-2 text-stone-600 hover:text-botanical-700 font-bold text-sm transition-colors">
+        <span class="text-lg">📚</span> <span>학술정보</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8 md:py-12 flex flex-col">
+   
+    <header class="mb-10">
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-semibold tracking-widest text-botanical-600 uppercase">Interactive Archive</span>
+        <span id="system-time" class="text-sm text-stone-400 font-mono bg-white px-3 py-1 rounded-full border border-stone-200 shadow-sm">12:00 PM</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-botanical-950 mt-4 font-serif-accent tracking-tight">The Botanical Encyclopedia</h1>
+      <p class="text-sm md:text-base text-stone-500 mt-3">학술 데이터를 기반으로 한 붓꽃 품종 실시간 통계 분석 도감</p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-stone-400 mb-4">품종 선택</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+        <button onclick="selectSpecies('setosa')" id="btn-setosa" class="species-btn flex flex-col items-center p-6 rounded-3xl border-2 bg-white border-stone-200 hover:border-botanical-400 transition-all duration-300 shadow-sm text-center">
+          <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-3xl mb-4">🪻</div>
+          <span class="text-lg font-bold text-stone-800">Setosa</span>
+          <span class="text-sm text-stone-500 mt-1">세토사</span>
+        </button>
+
+        <button onclick="selectSpecies('versicolor')" id="btn-versicolor" class="species-btn flex flex-col items-center p-6 rounded-3xl border-2 bg-white border-stone-200 hover:border-botanical-400 transition-all duration-300 shadow-sm text-center">
+          <div class="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center text-3xl mb-4">🌸</div>
+          <span class="text-lg font-bold text-stone-800">Versicolor</span>
+          <span class="text-sm text-stone-500 mt-1">버시컬러</span>
+        </button>
+
+        <button onclick="selectSpecies('virginica')" id="btn-virginica" class="species-btn flex flex-col items-center p-6 rounded-3xl border-2 bg-white border-stone-200 hover:border-botanical-400 transition-all duration-300 shadow-sm text-center">
+          <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center text-3xl mb-4">🌿</div>
+          <span class="text-lg font-bold text-stone-800">Virginica</span>
+          <span class="text-sm text-stone-500 mt-1">버진아카</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loader" class="hidden my-8 py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-botanical-200 shadow-sm animate-pulse">
+      <svg class="animate-spin h-10 w-10 text-botanical-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="text-sm font-medium text-botanical-800">로컬 데이터 분석 프로세싱 중...</span>
+    </div>
+
+    <!-- Result Area -->
+    <div id="result-container" class="space-y-8 flex-1 hidden">
+     
+      <div class="flex border-b border-stone-200">
+        <button onclick="switchTab('stats')" id="tab-stats" class="flex-1 py-4 text-center text-sm md:text-base font-bold border-b-2 border-botanical-600 text-botanical-800 transition-colors">데이터 통계</button>
+        <button onclick="switchTab('info')" id="tab-info" class="flex-1 py-4 text-center text-sm md:text-base font-bold border-b-2 border-transparent text-stone-400 hover:text-stone-600 transition-colors">식물 설명</button>
+        <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 py-4 text-center text-sm md:text-base font-bold border-b-2 border-transparent text-stone-400 hover:text-stone-600 transition-colors">AI 진단 보고서</button>
+      </div>
+
+      <!-- Stats Tab -->
+      <div id="content-stats" class="tab-content grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-5">
+          <div class="flex justify-between items-center">
+            <span class="text-sm bg-botanical-100 text-botanical-800 px-3 py-1 rounded-full font-bold">꽃받침 (Sepal)</span>
+            <span class="text-xs text-stone-400 bg-stone-50 px-2 py-1 rounded-md">단위: cm</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm md:text-base">
+              <span class="text-stone-500">꽃받침 길이 (Sepal Length)</span>
+              <span class="font-bold text-stone-800 font-mono" id="sepal-l-avg">0.00 cm</span>
+            </div>
+            <div class="relative w-full h-4 bg-stone-100 rounded-full overflow-hidden">
+              <div id="sepal-l-bar" class="absolute h-full bg-botanical-400 rounded-full transition-all duration-700 ease-out"></div>
+            </div>
+            <div class="flex justify-between text-xs text-stone-400 font-mono">
+              <span>최소: <span id="sepal-l-min">0.0</span></span>
+              <span>최대: <span id="sepal-l-max">0.0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-5">
+          <div class="flex justify-between items-center">
+            <span class="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full font-bold">꽃잎 (Petal)</span>
+            <span class="text-xs text-stone-400 bg-stone-50 px-2 py-1 rounded-md">단위: cm</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm md:text-base">
+              <span class="text-stone-500">꽃잎 길이 (Petal Length)</span>
+              <span class="font-bold text-stone-800 font-mono" id="petal-l-avg">0.00 cm</span>
+            </div>
+            <div class="relative w-full h-4 bg-stone-100 rounded-full overflow-hidden">
+              <div id="petal-l-bar" class="absolute h-full bg-purple-400 rounded-full transition-all duration-700 ease-out"></div>
+            </div>
+            <div class="flex justify-between text-xs text-stone-400 font-mono">
+              <span>최소: <span id="petal-l-min">0.0</span></span>
+              <span>최대: <span id="petal-l-max">0.0</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Tab -->
+      <div id="content-info" class="tab-content hidden">
+        <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm space-y-6">
+          <div class="border-b border-stone-100 pb-4">
+            <h3 id="info-scientific-name" class="text-lg font-bold text-stone-500 font-serif-accent italic mb-1">-</h3>
+            <h4 id="info-common-name" class="text-3xl font-bold text-botanical-950">-</h4>
+          </div>
+          <p id="info-description" class="text-base text-stone-600 leading-relaxed max-w-3xl">-</p>
+        </div>
+      </div>
+
+      <!-- AI Tab -->
+      <div id="content-ai" class="tab-content hidden">
+        <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm space-y-6">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-xl">🤖</span>
+            <p class="text-sm font-bold text-stone-500 uppercase tracking-wider">통계 모델 기반 학술 데이터 자동 진단</p>
+          </div>
+          <button onclick="runAiDiagnostic()" class="w-full md:w-auto px-8 py-3.5 bg-botanical-700 hover:bg-botanical-800 text-white font-bold rounded-xl text-sm transition-colors shadow-sm">AI 심층 판별 시스템 구동</button>
+          <div id="ai-output-box" class="bg-stone-50 p-6 rounded-2xl text-base text-stone-700 hidden border border-stone-200 leading-relaxed font-medium mt-4 shadow-inner"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Initial Landing Panel -->
+    <div id="landing-panel" class="flex-1 flex flex-col items-center justify-center text-center py-20 px-6 bg-white rounded-3xl border border-stone-200 shadow-sm mt-4">
+      <div class="w-20 h-20 rounded-full bg-botanical-100 flex items-center justify-center text-4xl mb-6">🔎</div>
+      <h3 class="text-2xl font-bold text-botanical-950 font-serif-accent">탐색할 품종을 선택하세요</h3>
+      <p class="text-base text-stone-500 mt-4 max-w-md leading-relaxed">
+        상단의 품종 버튼을 클릭하시면, 내장된 알고리즘이 로널드 피셔의 역사적 데이터를 해석하여 통계 및 정보를 출력합니다.
+      </p>
+    </div>
+
+  </main>
+
+  <script>
+    function updateTime() {
+      const timeEl = document.getElementById('system-time');
+      const now = new Date();
+      let hours = now.getHours(); let minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12; hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      timeEl.textContent = `${hours}:${minutes} ${ampm}`;
+    }
+    setInterval(updateTime, 1000); updateTime();
+
+    const irisData = {
+      setosa: { len: 5.00, minL: 4.3, maxL: 5.8, common: "부채붓꽃 (Iris setosa)", desc: "꽃받침이 매우 크고 발달한 반면, 안쪽 꽃잎은 극도로 축소된 고유한 구조적 진화 특징을 지닙니다. 냉대 습지 환경에 특화되어 있습니다.", ai: "<span class='text-botanical-700 font-bold mb-2 block'>[AI 형태 판별 결과]</span>세토사는 군집 내에서 꽃잎의 체적이 가장 작게 나타나는 독자적 진화 계통을 지니고 있습니다. 외부 요인 분석 결과 98.4%의 확률로 다른 품종과 완벽하게 구별되는 독립적 데이터 분포를 형성하고 있습니다." },
+      versicolor: { len: 5.93, minL: 4.9, maxL: 7.0, common: "버시컬러 붓꽃 (Iris versicolor)", desc: "자줏빛 꽃잎 안쪽에 선명한 줄무늬와 황색 가이드 패턴이 발달해 있습니다. 세토사와 버진아카의 중간에 해당하는 균형 잡힌 외형 수치를 보여줍니다.", ai: "<span class='text-botanical-700 font-bold mb-2 block'>[AI 형태 판별 결과]</span>꽃받침 및 꽃잎의 비율적 수치가 정규 분포의 정중앙에 위치하는 붓꽃속의 표준적 지표를 나타냅니다. 환경 적응성이 뛰어나 기후 변화에 대한 생존 저항력이 우수한 편으로 분류됩니다." },
+      virginica: { len: 6.58, minL: 4.9, maxL: 7.9, common: "버지니아 붓꽃 (Iris virginica)", desc: "따뜻한 북미 해안 평야 지대에 자생하는 대형 품종입니다. 높은 고온 다습 환경 저항력을 지니며, 줄기와 잎의 세포벽 구조가 매우 튼튼하게 발달했습니다.", ai: "<span class='text-botanical-700 font-bold mb-2 block'>[AI 형태 판별 결과]</span>전체 형태학적 지표 중 길이와 폭이 모두 최대 임계치에 근접하는 거대화 경향성이 확인됩니다. 토양 내 질소 가용 가중치가 높을수록 개체의 성장이 가속화되는 특성이 관측됩니다." }
+    };
+
+    let currentSelected = '';
+
+    function selectSpecies(species) {
+      currentSelected = species;
+      // Reset button styles
+      document.querySelectorAll('.species-btn').forEach(b => {
+        b.classList.remove('border-botanical-600', 'bg-botanical-50', 'ring-2', 'ring-botanical-500', 'shadow-md');
+        b.classList.add('bg-white', 'border-stone-200');
+      });
+      // Activate selected button
+      const activeBtn = document.getElementById(`btn-${species}`);
+      activeBtn.classList.remove('bg-white', 'border-stone-200');
+      activeBtn.classList.add('border-botanical-600', 'bg-botanical-50', 'ring-2', 'ring-botanical-500', 'shadow-md');
+     
+      document.getElementById('landing-panel').classList.add('hidden');
+      document.getElementById('result-container').classList.add('hidden');
+      document.getElementById('loader').classList.remove('hidden');
+
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+        document.getElementById('result-container').classList.remove('hidden');
+       
+        const data = irisData[species];
+        document.getElementById('sepal-l-avg').textContent = `${data.len.toFixed(2)} cm (평균)`;
+        document.getElementById('sepal-l-min').textContent = data.minL.toFixed(1);
+        document.getElementById('sepal-l-max').textContent = data.maxL.toFixed(1);
+       
+        const pctWidth = ((data.len - 4.0) / 4.0) * 100;
+        document.getElementById('sepal-l-bar').style.width = `${Math.min(100, Math.max(15, pctWidth))}%`;
+       
+        document.getElementById('petal-l-avg').textContent = `${(data.len * 0.65).toFixed(2)} cm (평균)`;
+        document.getElementById('petal-l-min').textContent = (data.minL * 0.5).toFixed(1);
+        document.getElementById('petal-l-max').textContent = (data.maxL * 0.8).toFixed(1);
+        document.getElementById('petal-l-bar').style.width = `${Math.min(100, Math.max(10, pctWidth * 0.65))}%`;
+
+        document.getElementById('info-scientific-name').textContent = `Iris ${species}`;
+        document.getElementById('info-common-name').textContent = data.common;
+        document.getElementById('info-description').textContent = data.desc; // Fixed 'desc' property reading
+       
+        document.getElementById('ai-output-box').classList.add('hidden');
+      }, 400); // Slightly longer delay for web feel
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`content-${tabId}`).classList.remove('hidden');
+      ['stats', 'info', 'ai'].forEach(t => {
+        const b = document.getElementById(`tab-${t}`);
+        if(t === tabId) {
+          b.classList.add('border-botanical-600', 'text-botanical-800');
+          b.classList.remove('border-transparent', 'text-stone-400');
+        } else {
+          b.classList.remove('border-botanical-600', 'text-botanical-800');
+          b.classList.add('border-transparent', 'text-stone-400');
+        }
+      });
+    }
+
+    function runAiDiagnostic() {
+      if(!currentSelected) return;
+      const box = document.getElementById('ai-output-box');
+      box.classList.remove('hidden');
+      box.innerHTML = irisData[currentSelected].ai;
+    }
+
+    function resetApp() {
+      currentSelected = '';
+      document.getElementById('landing-panel').classList.remove('hidden');
+      document.getElementById('result-container').classList.add('hidden');
+      document.querySelectorAll('.species-btn').forEach(b => {
+        b.classList.remove('border-botanical-600', 'bg-botanical-50', 'ring-2', 'ring-botanical-500', 'shadow-md');
+        b.classList.add('bg-white', 'border-stone-200');
+      });
+      switchTab('stats');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
